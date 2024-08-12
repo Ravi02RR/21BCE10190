@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import config from '../config/confo';
 import axios from 'axios';
+import Card from '../components/Card';
 
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -8,23 +9,30 @@ const Home = () => {
     const [company, setCompany] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const [products, setProducts] = useState([]);
     const accessToken = config.accessToken;
     const endpoint = `http://20.244.56.144/test/companies/${company}/categories/${category}/?top=n&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+
     const fetchData = async () => {
         try {
-            const response = await axios.get(endpoint, {
+            const response = await fetch(endpoint, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-            console.log(response);
+            const data = await response.json();
+            setProducts(data);
         } catch (error) {
             console.error(error);
         }
     };
-    fetchData();
+    useEffect(() => {
+        fetchData();
+    }, [company, category, minPrice, maxPrice]);
+
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -53,9 +61,8 @@ const Home = () => {
     };
 
     return (
-        <div className="bg-black min-h-screen flex items-center justify-center">
+        <div className="bg-black min-h-screen flex items-center justify-center flex-col">
             <div className="bg-white p-8 rounded-lg shadow-lg">
-
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
@@ -101,6 +108,13 @@ const Home = () => {
                         Search
                     </button>
                 </form>
+            </div>
+
+            {/* Display the top N products */}
+            <div className="grid grid-cols-3 gap-4 mt-8">
+                {products.map((product) => (
+                    <Card key={product.id} product={product} />
+                ))}
             </div>
         </div>
     );

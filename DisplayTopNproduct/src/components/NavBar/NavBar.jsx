@@ -1,7 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-
 const NavBar = () => {
     return (
         <div className=' '>
@@ -9,17 +8,13 @@ const NavBar = () => {
                 <h1>my Ecommerce app</h1>
                 <ul className='flex justify-between '>
                     <li className='p-2'>
-                        <NavLink to='/' activeClassName='text-red-500' className='hover:text-red-500'>Home</NavLink>
+                        <NavLink to='/' activeclassname='text-red-500' className='hover:text-red-500'>Home</NavLink>
                     </li>
                     <li className='p-2'>
-                        <NavLink to='/custompage' activeClassName='text-red-500' className='hover:text-red-500'>Custompage</NavLink>
+                        <NavLink to='/custompage' activeclassname='text-red-500' className='hover:text-red-500'>Custompage</NavLink>
                     </li>
                 </ul>
-
             </nav>
-
-
-
         </div>
     )
 }
