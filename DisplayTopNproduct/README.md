@@ -1,8 +1,33 @@
-# React + Vite
+## Locally Installation !
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+```bash
+git clone  ``https://github.com/Ravi02RR/21BCE10190.git``
+```
 
-Currently, two official plugins are available:
+```bash
+cd DisplayTopNproduct
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+![1.png](1.png)
+
+_Description:_ Frontend of the website
+
+### Image 2
+
+![2.png](2.png)
+
+_Description:_ Geting CORS error while fetching data
+
+### Image 3
+
+![3.png](3.png)
+
+_Description:_ Geting CORS error while fetching data
