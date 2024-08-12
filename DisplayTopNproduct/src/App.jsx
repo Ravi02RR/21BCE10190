@@ -1,21 +1,19 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Suspense, lazy } from 'react'
-import NavBar from './components/NavBar/NavBar'
-
-// lazy import of home page
-const Home = lazy(() => import('./Page/Home'))
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './Page/Home';
+import ProductDetails from './Page/Custompage';
+import NavBar from './components/NavBar/NavBar';
 
 function App() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BrowserRouter>
-        <NavBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
-    </Suspense>
-  )
+    <Router>
+      <NavBar />
+      <Routes>
+        <Route  path="/" element={<Home/>} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

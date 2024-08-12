@@ -1,19 +1,24 @@
 import React from 'react';
+import { getRandomImage } from '../utils/productUtils.js';
 
-const Card = (props) => {
-    const { imageUrl, title, description } = props;
+const Card = ({ product }) => {
+    const { name, company, category, price, rating, discount, availability } = product;
+    const imageUrl = getRandomImage();
 
     return (
-        <div>
-            <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <img className="rounded-t-lg" src={imageUrl} alt="" />
-                <div className="p-5">
-                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h5>
-                    <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{description}</p>
-                </div>
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <img className="w-full h-48 object-cover" src={imageUrl} alt={name} />
+            <div className="p-4">
+                <h3 className="font-bold text-xl mb-2">{name}</h3>
+                <p>Company: {company}</p>
+                <p>Category: {category}</p>
+                <p>Price: ${price}</p>
+                <p>Rating: {rating}/5</p>
+                <p>Discount: {discount}%</p>
+                <p>Availability: {availability ? 'In Stock' : 'Out of Stock'}</p>
             </div>
         </div>
     );
-}
+};
 
 export default Card;

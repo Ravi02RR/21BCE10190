@@ -1,20 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import config from '../config/confo';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Card from '../components/Card';
+import { generateUniqueId } from '../utils/productUtils';
+import config from '../config/confo';
 
 const Home = () => {
-    const [searchQuery, setSearchQuery] = useState('');
     const [category, setCategory] = useState('');
     const [company, setCompany] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const companyOptions = ["AMZ", "FLP", "SNP", "MYN", "AZO"];
+    const categoryOptions = [
+        "Phone", "Computer", "TV", "Earphone", "Tablet", "Charger", "Mouse", 
+        "Keypad", "Bluetooth", "Pendrive", "Remote", "Speaker", "Headset", "Laptop", "PC"
+    ];
+
     const accessToken = config.accessToken;
-    const endpoint = `http://20.244.56.144/test/companies/${company}/categories/${category}/?top=n&minPrice=${minPrice}&maxPrice=${maxPrice}`;
 
     const fetchData = async () => {
+        setIsLoading(true);
+        setError(null);
         try {
+            const endpoint = `http://20.244.56.144/test/companies/${company}/categories/${category}/products?top=10&minPrice=${minPrice}&maxPrice=${maxPrice}`;
             const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
@@ -23,97 +34,83 @@ const Home = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
             const data = await response.json();
-            setProducts(data);
+            const productsWithIds = data.map(product => ({
+                ...product,
+                id: generateUniqueId(product)
+            }));
+            setProducts(productsWithIds);
         } catch (error) {
-            console.error(error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
         }
-    };
-    useEffect(() => {
-        fetchData();
-    }, [company, category, minPrice, maxPrice]);
-
-
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-    };
-
-    const handleCategoryChange = (e) => {
-        setCategory(e.target.value);
-    };
-
-    const handleCompanyChange = (e) => {
-        setCompany(e.target.value);
-    };
-
-    const handleMinPriceChange = (e) => {
-        setMinPrice(e.target.value);
-    };
-
-    const handleMaxPriceChange = (e) => {
-        setMaxPrice(e.target.value);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Search query:', searchQuery);
         fetchData();
     };
 
     return (
-        <div className="bg-black min-h-screen flex items-center justify-center flex-col">
-            <div className="bg-white p-8 rounded-lg shadow-lg">
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={handleSearch}
+        <div className="bg-gray-100 min-h-screen p-8">
+           
+            <div className="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <select 
+                        value={company} 
+                        onChange={(e) => setCompany(e.target.value)}
+                        className="p-2 border rounded"
+                    >
+                        <option value="">Select Company</option>
+                        {companyOptions.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
+                    </select>
+                    <select 
+                        value={category} 
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="p-2 border rounded"
+                    >
+                        <option value="">Select Category</option>
+                        {categoryOptions.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
+                    </select>
+                    <input 
+                        type="number" 
+                        placeholder="Min Price" 
+                        value={minPrice} 
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="p-2 border rounded"
                     />
-                    <div className="flex justify-between mt-4">
-                        <input
-                            type="text"
-                            className="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="Category"
-                            value={category}
-                            onChange={handleCategoryChange}
-                        />
-                        <input
-                            type="text"
-                            className="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="Company"
-                            value={company}
-                            onChange={handleCompanyChange}
-                        />
-                        <input
-                            type="number"
-                            className="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="Min Price"
-                            value={minPrice}
-                            onChange={handleMinPriceChange}
-                        />
-                        <input
-                            type="number"
-                            className="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="Max Price"
-                            value={maxPrice}
-                            onChange={handleMaxPriceChange}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                    <input 
+                        type="number" 
+                        placeholder="Max Price" 
+                        value={maxPrice} 
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="p-2 border rounded"
+                    />
+                    <button 
+                        type="submit" 
+                        className="bg-red-500 text-white py-2 px-4 rounded col-span-2 md:col-span-4"
                     >
                         Search
                     </button>
                 </form>
             </div>
 
-            {/* Display the top N products */}
-            <div className="grid grid-cols-3 gap-4 mt-8">
+            {isLoading && <p className="text-center">Loading...</p>}
+            {error && <p className="text-center text-red-500">{error}</p>}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {products.map((product) => (
-                    <Card key={product.id} product={product} />
+                    <Link to={`/product/${product.id}`} key={product.id}>
+                        <Card product={product} />
+                    </Link>
                 ))}
             </div>
         </div>
